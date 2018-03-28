@@ -197,3 +197,136 @@ git status
 git add .
 git commit -m "add post CRUD"
 git push origin posts
+```
+# comment 评论功能构建
+```
+git checkout -b comment
+rails g controller comments
+rails g model Comment name:string comment:text
+rake db:migrate
+
+
+rails g migration AddPostIdToComments
+---
+db/migrate/20180328064613_add_post_id_to_comments.rb
+---
+class AddPostIdToComments < ActiveRecord::Migration[5.1]
+  def change
+    add_column :comments, :post_id, :integer
+  end
+end
+---
+rake db:migrate
+---
+```
+```
+app/models/comment.rb
+---
+class Comment < ApplicationRecord
+  belongs_to :post
+end
+---
+app/models/post.rb
+---
+class Post < ApplicationRecord
+  has_many :comments
+end
+---
+```
+```
+config/routes.rb
+---
+Rails.application.routes.draw do
+ resources :posts do
+   resources :comments
+  end
+
+ root 'posts#index'
+end
+---
+
+app/controllers/comments_controller.rb
+---
+class CommentsController < ApplicationController
+
+  def create
+    @post = Post.find(params[:post_id])
+    @comment = @post.comments.create(params[:comment].permit(:name, :comment))
+    redirect_to post_path(@post)
+
+end
+
+def destroy
+  @post = Post.find(params[:post_id])
+  @comment = @post.comments.find(params[:id])
+  @comment.destroy
+  redirect_to post_path(@post)
+end
+
+end
+---
+app/views/comments/_from.html.erb
+---
+<%= simple_form_for([@post, @post.comments.build]) do |f| %>
+<%=f.input :name %>
+<%=f.input :comment %>
+<%=f.button :submit %>
+<% end %>
+---
+
+
+app/views/comments/_comment.html.erb
+---
+<p>
+  <%= comment.name %>:
+  <%= comment.comment %>
+</p>
+
+<%= link_to 'Delete', [comment.post, comment],
+               method: :delete, class: "button is-danger", data: { confirm: 'Are you sure?' } %>
+---
+
+app/views/posts/show.html.erb
+---
+<h1><%= @post.title %></h1>
+<p><%= @post.content %></p>
+
+<%= link_to "Home", root_path, class: "button" %>
+<%= link_to "Edit", edit_post_path(@post), class: "button" %>
+<%= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "are you sure? " }, class: "button" %>
+
+
+<p><%= @post.comments.count %> Comments</p>
+
+<%= render @post.comments %>
+<p>leave a reply</p>
+<%= render 'comments/from' %>
+---
+```
+
+# comment 的最终效果
+![image](https://ws2.sinaimg.cn/large/006tNc79gy1fpskiobs7lj30ms0a2q3q.jpg)
+![image](https://ws2.sinaimg.cn/large/006tNc79gy1fpski68p8ej30oi0nedhm.jpg)
+
+```
+rails console
+2.3.1 :001 > @post = Post
+2.3.1 :002 > @Post.connection
+2.3.1 :003 > @post.connection
+2.3.1 :004 > @post.all
+2.3.1 :005 > @post = Post.find(3)
+2.3.1 :006 > @post
+2.3.1 :007 > @post.title = "this is a nice to you!"
+2.3.1 :008 > @post.save
+2.3.1 :009 > exit
+---
+```
+![image](https://ws4.sinaimg.cn/large/006tNc79gy1fpsk9co0rmj31kw0lcaku.jpg)
+![image](https://ws1.sinaimg.cn/large/006tNc79gy1fpsk97cwqjj31kw0jlgtu.jpg)
+
+```
+git status
+git add .
+git commit -m "add comment to post"
+git push origin comment
+```
