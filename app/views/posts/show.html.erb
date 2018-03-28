@@ -1,0 +1,6 @@
+<h1><%= @post.title %></h1>
+<p><%= @post.content %></p>
+
+<%= link_to "Home", root_path, class: "button" %>
+<%= link_to "Edit", edit_post_path(@post), class: "button" %>
+<%= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "are you sure? " }, class: "button" %>
