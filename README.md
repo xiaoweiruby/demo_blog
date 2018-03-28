@@ -62,3 +62,10 @@ git commit -m "add gems"
 git push origin gem
 ```
 ![image](https://ws4.sinaimg.cn/large/006tNc79ly1fpsbjx835fj31b80vgjyp.jpg)
+
+# Github 上传方法
+
+![image](https://ws3.sinaimg.cn/large/006tNc79ly1fpsbmo5v3bj31kw0rx0zk.jpg)
+![image](https://ws3.sinaimg.cn/large/006tNc79ly1fpsbmjwlqgj31800qydjc.jpg)
+![image](https://ws3.sinaimg.cn/large/006tNc79ly1fpsbmfh6rxj31960sgjx2.jpg)
+![image](https://ws2.sinaimg.cn/large/006tNc79ly1fpsbm8x3bvj318w0sktee.jpg)
