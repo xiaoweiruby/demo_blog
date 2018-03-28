@@ -5,8 +5,15 @@
 ### 构建 demo_blog 的案例的关键在于完成三个维度的动作：
 
 - （1） gem 安装和调试；
-- （2） 增删改查 的功能的调试 + 样式 的调试；
+- （2） 增删改查 的功能； 
 - （3） 评论功能 的调试；
+- （4） 样式功能 的修改；
+
+# demo_blog 的最终效果
+![image](https://ws1.sinaimg.cn/large/006tNc79gy1fpsle85n6oj31kw0twtbo.jpg)
+![image](https://ws1.sinaimg.cn/large/006tNc79gy1fpsldzv9xmj31kw0omdif.jpg)
+![image](https://ws1.sinaimg.cn/large/006tNc79gy1fpsldrv83oj31kw0rdq57.jpg)
+![image](https://ws1.sinaimg.cn/large/006tNc79gy1fpsldmrzi9j31kw0tf417.jpg)
 
 ```
 cd workspace
@@ -330,3 +337,199 @@ git add .
 git commit -m "add comment to post"
 git push origin comment
 ```
+![image](https://ws4.sinaimg.cn/large/006tNc79gy1fpskmt270uj31cs0te467.jpg)
+
+```
+git checkout -b layouts-css
+---
+app/views/layouts/application.html.erb
+---
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DemoBlog</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+
+  <body>
+  	<section class="hero is-primary is-medium">
+	  <!-- Hero head: will stick at the top -->
+	  <div class="hero-head">
+	    <nav class="navbar">
+	      <div class="container">
+	        <div class="navbar-brand">
+	          <%= link_to 'Demo Blog', root_path, class: "navbar-item" %>
+	          <span class="navbar-burger burger" data-target="navbarMenuHeroA">
+	            <span></span>
+	            <span></span>
+	            <span></span>
+	          </span>
+	        </div>
+	        <div id="navbarMenuHeroA" class="navbar-menu">
+	          <div class="navbar-end">
+	            <%= link_to "Create New Post", new_post_path, class:"navbar-item" %>
+	          </div>
+	        </div>
+	      </div>
+	    </nav>
+	  </div>
+
+	  <!-- Hero content: will be in the middle -->
+	  <div class="hero-body">
+	    <div class="container has-text-centered">
+	      <h1 class="title">
+	        <%= yield :page_title %>
+	      </h1>
+	    </div>
+	  </div>
+	</section>
+    <%= yield %>
+  </body>
+</html>
+---
+app/views/posts/_form.html.erb
+---
+<div class="section">
+<%= simple_form_for @post do |f| %>
+  <div class="field">
+    <div class="control">
+      <%= f.input :title, input_html: { class: 'input' }, wrapper: false, label_html: { class: 'label' } %>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <%= f.input :content, input_html: { class: 'textarea' }, wrapper: false, label_html: { class: 'label' }  %>
+    </div>
+  </div>
+  <%= f.button :submit, class: "button is-primary" %>
+<% end %>
+</div>
+---
+app/views/posts/edit.html.erb
+---
+<% content_for :page_title, "Edit Post" %>
+<%= render 'form' %>
+---
+app/views/posts/new.html.erb
+---
+<% content_for :page_title, "Create a new post" %>
+<%= render 'form' %>
+---
+app/views/posts/show.html.erb
+---
+<% content_for :page_title, @post.title %>
+
+<section class="section">
+	<div class="container">
+		<nav class="level">
+		  <!-- Left side -->
+		  <div class="level-left">
+		    <p class="level-item">
+		        <strong>Actions</strong>
+		    </p>
+		  </div>
+		  <!-- Right side -->
+		  <div class="level-right">
+		  	<p class="level-item">
+		    	<%= link_to "Edit", edit_post_path(@post), class:"button" %>
+		  	</p>
+		  	<p class="level-item">
+				<%= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "Are you sure?" }, class:"button is-danger" %>
+				</p>
+		  </div>
+		</nav>
+		<hr/>
+
+		<div class="content">
+			<%= @post.content %>
+		</div>
+	</div>
+</section>
+
+
+<section class="section comments">
+	<div class="container">
+		<h2 class="subtitle is-5"><strong><%= @post.comments.count %></strong> Comments</h2>
+		<%= render @post.comments %>
+		<div class="comment-form">
+			<hr />
+			<h3 class="subtitle is-3">Leave a reply</h3>
+	 		<%= render 'comments/from' %>
+		</div>
+	</div>
+</section>
+
+---
+app/views/posts/index.html.erb
+---
+<% content_for :page_title,  "Index" %>
+
+<div class="section">
+	<div class="container">
+		<% @posts.each do |post| %>
+			<div class="card">
+		  <div class="card-content">
+		    <div class="media">
+		      <div class="media-content">
+		        <p class="title is-4"><%= link_to post.title, post  %></p>
+		      </div>
+		    </div>
+		    <div class="content">
+		     	<%= post.content %>
+		    </div>
+		    <div class="comment-count">
+		    	<span class="tag is-rounded"><%= post.comments.count %> comments</span>
+		    </div>
+		  </div>
+		</div>
+		<% end %>
+	</div>
+</div>
+---
+
+app/views/comments/_comment.html.erb
+---
+<div class="box">
+  <article class="media">
+    <div class="media-content">
+      <div class="content">
+        <p>
+          <strong><%= comment.name %>:</strong>
+          <%= comment.comment %>
+        </p>
+      </div>
+    </div>
+     <%= link_to 'Delete', [comment.post, comment],
+                  method: :delete, class: "button is-danger", data: { confirm: 'Are you sure?' } %>
+  </article>
+
+</div>
+---
+app/views/comments/_from.html.erb
+---
+<%= simple_form_for([@post, @post.comments.build]) do |f| %>
+
+<div class="field">
+  <div class="control">
+    <%= f.input :name, input_html: { class: 'input' }, wrapper: false, label_html: { class: 'label' } %>
+  </div>
+</div>
+
+<div class="field">
+  <div class="control">
+    <%= f.input :comment, input_html: { class: 'textarea' }, wrapper: false, label_html: { class: 'label' }  %>
+  </div>
+</div>
+<%= f.button :submit, 'Leave a reply', class: "button is-primary" %>
+<% end %>
+---
+```
+# demo_blog 的最终效果
+![image](https://ws1.sinaimg.cn/large/006tNc79gy1fpsle85n6oj31kw0twtbo.jpg)
+![image](https://ws1.sinaimg.cn/large/006tNc79gy1fpsldzv9xmj31kw0omdif.jpg)
+![image](https://ws1.sinaimg.cn/large/006tNc79gy1fpsldrv83oj31kw0rdq57.jpg)
+![image](https://ws1.sinaimg.cn/large/006tNc79gy1fpsldmrzi9j31kw0tf417.jpg)
