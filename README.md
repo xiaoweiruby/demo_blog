@@ -55,8 +55,10 @@ exit
 ![image](https://ws2.sinaimg.cn/large/006tNc79ly1fpsbhgsktij313207wmza.jpg)
 ![image](https://ws4.sinaimg.cn/large/006tNc79ly1fpsbfs8wjmj31kw0p87d6.jpg)
 ![image](https://ws4.sinaimg.cn/large/006tNc79ly1fpsbgpxuv6j31hw0rq45t.jpg)
-
+```
 git status
 git add .
 git commit -m "add gems"
 git push origin gem
+```
+![image](https://ws4.sinaimg.cn/large/006tNc79ly1fpsbjx835fj31b80vgjyp.jpg)
