@@ -5,7 +5,7 @@
 ### 构建 demo_blog 的案例的关键在于完成三个维度的动作：
 
 - （1） gem 安装和调试；
-- （2） 增删改查 的功能； 
+- （2） 增删改查 的功能；
 - （3） 评论功能 的调试；
 - （4） 样式功能 的修改；
 
@@ -110,7 +110,7 @@ app/controllers/posts_controller.rb
 ---
 class PostsController < ApplicationController
    def index
-     @post = Post.all.order("created_at DESC")
+     @posts = Post.all.order("created_at DESC")
   end
 
   def new
